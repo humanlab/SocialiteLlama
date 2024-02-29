@@ -21,7 +21,7 @@ import importlib
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Evaluation')
     parser.add_argument('--checkpoint', type=str, required=True,
-                        help='Path to the base model checkpoint.')
+                        help='Path to socialite model checkpoint.')
     parser.add_argument('--dataset', type=str, required=True,
                         help='Path to the dataset.')
     parser.add_argument('--output_file', type=str, required=True,
