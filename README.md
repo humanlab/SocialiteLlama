@@ -38,4 +38,16 @@ CUDA_VISIBLE_DEVICES=0 python eval/zeroshot.py --checkpoint hlab/SocialiteLlama 
 The full list of task types can be found in the paper.
 
 
+## CITE US
 
+```
+@inproceedings{
+  dey-etal-2024-socialite,
+  title={{SOCIALITE}-{LLAMA}: An Instruction-Tuned Model for Social Scientific Tasks},
+  author={Dey, Gourab and V Ganesan, Adithya and Lal, Yash Kumar and Shah, Manal and Sinha, Shreyashee and Matero, Matthew and Giorgi, Salvatore and Kulkarni, Vivek and Schwartz, H. Andrew},
+  address = "St. Julian’s, Malta",
+  booktitle={18th Conference of the European Chapter of the Association for Computational Linguistics},
+  year={2024},
+  publisher = {Association for Computational Linguistics} 
+  }
+```
