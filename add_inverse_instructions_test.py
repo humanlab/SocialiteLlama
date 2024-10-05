@@ -45,12 +45,14 @@ reverse_instructions['INTENTTOOFFEND'] = "Upon receiving an intent label, your t
 
 reverse_instructions['BIASEDIMPLICATION'] = "Upon receiving an intent label, your task is to generate a text that is offensive in nature, but aligns with the specified intent to either offend or not offend. If the label is 'intentional', craft a text that is deliberately offensive, clearly showing an intent to promote social biases or stereotypes with the goal of offending. If the label is 'not intentional', generate a text that, while still offensive, appears to lack any clear motive or intent to offend. Ensure the content reflects the offensive nature of the subject matter but follows the intent indicated by the label."
 
-dataset_train = load_dataset("hlab/SocialiteInstructions", split="train")
-dataset_val = load_dataset("hlab/SocialiteInstructions", split="validation")
+# dataset_train = load_dataset("hlab/SocialiteInstructions", split="train")
+# dataset_val = load_dataset("hlab/SocialiteInstructions", split="validation")
+dataset_test = load_dataset("hlab/SocialiteInstructions", split="test")
 
 
 def add_inverse_column(example, idx):
-    example['Inverse Instruction'] = reverse_instructions[example['task_type']]
+    if(example['task_type'] in reverse_instructions.keys()):
+        example['Inverse Instruction'] = reverse_instructions[example['task_type']]
     return example
 
 def add_article_column(example, idx):
@@ -72,10 +74,7 @@ def filter_dataset(dataset, removed):
     filtered_dataset = dataset.select(keep_indices)
     return filtered_dataset
 
-new_column = ["Foo"] * len(dataset_train)
-dataset_train = dataset_train.add_column("Inverse Instruction", new_column)
-dataset_train = dataset_train.map(add_inverse_column, with_indices=True)
-print(dataset_train[0]["Inverse Instruction"])
+
 
 csv1_path = '/chronos_data/gdey/datasets/BuechelDatasets/messages.csv'
 csv1_df = pd.read_csv(csv1_path)
@@ -97,28 +96,18 @@ matched_essays_text = {essay: article_text_dict.get(article_id, None) for essay,
 # print("Key", first_key)
 # print("Value *********************: ", first_value)
 
-training_examples_above3k = {362: 6955, 2294: 3387, 2538: 5867, 2780: 4749, 3532: 4830, 3651: 7413, 4263: 3350, 6256: 7507, 7139: 7430, 7203: 5922, 9086: 7480, 11261: 3237, 11685: 3386, 14396: 3774, 15729: 3368, 16260: 6966, 16838: 3871, 20274: 4733, 21720: 6997, 22588: 3503, 23734: 3423, 23899: 4728, 30322: 3218, 31679: 3773, 32354: 3448, 33991: 3243, 38931: 3248, 39238: 3334, 40675: 4510, 41924: 3318, 42639: 3484, 43620: 3895, 44317: 4709, 46192: 5816, 48025: 3460, 49150: 6971, 49493: 3399, 50976: 3876, 52064: 3824, 53931: 6929, 53945: 3229, 55742: 3262, 58995: 3369, 59012: 5871, 59073: 6978, 61599: 6985, 62886: 3843, 63368: 4540, 64347: 4559, 65812: 3237, 67450: 3481, 68070: 3773, 68304: 3418, 70019: 3337, 70070: 7482, 71095: 6936, 75514: 4565, 76726: 7394, 76762: 4758, 78811: 3755, 79195: 7412, 80329: 7431, 80404: 6990, 80465: 5890, 83220: 7488, 83686: 3467, 84275: 5848, 84309: 3852, 87100: 3479, 87384: 4811, 87642: 7411, 90011: 6948, 90097: 4730, 90788: 4546, 92146: 4777, 94306: 3462, 96119: 7501, 96711: 3256, 98158: 5847, 98369: 7461, 98869: 5835, 99313: 3404, 100041: 4752, 101431: 4529, 102334: 3353, 104988: 3754, 105322: 3792, 106750: 3405, 106769: 5941, 107386: 5828}
-validation_examples_above3k = {3875: 4752, 5642: 4753, 7036: 3519, 10517: 3500, 12048: 3821, 12790: 3813, 15011: 4771, 22114: 4588, 26966: 3855, 30641: 3802, 30762: 3832, 32635: 3836, 33504: 4734, 34978: 4569}
-
-new_column = ["Foo"] * len(dataset_train)
-dataset_train = dataset_train.add_column("Article", new_column)
-dataset_train = dataset_train.map(add_article_column, with_indices=True)
-print(dataset_train[13]["Article"])
-
-dataset_train = filter_dataset(dataset_train, training_examples_above3k)
-dataset_train.to_csv('/chronos_data/gdey/datasets/socialite_instructions/inverse_instructions_filtered/train.csv')
-# combined_val_dataset.to_csv('/chronos_data/gdey/datasets/socialite_instructions/val.csv')
+# training_examples_above3k = {362: 6955, 2294: 3387, 2538: 5867, 2780: 4749, 3532: 4830, 3651: 7413, 4263: 3350, 6256: 7507, 7139: 7430, 7203: 5922, 9086: 7480, 11261: 3237, 11685: 3386, 14396: 3774, 15729: 3368, 16260: 6966, 16838: 3871, 20274: 4733, 21720: 6997, 22588: 3503, 23734: 3423, 23899: 4728, 30322: 3218, 31679: 3773, 32354: 3448, 33991: 3243, 38931: 3248, 39238: 3334, 40675: 4510, 41924: 3318, 42639: 3484, 43620: 3895, 44317: 4709, 46192: 5816, 48025: 3460, 49150: 6971, 49493: 3399, 50976: 3876, 52064: 3824, 53931: 6929, 53945: 3229, 55742: 3262, 58995: 3369, 59012: 5871, 59073: 6978, 61599: 6985, 62886: 3843, 63368: 4540, 64347: 4559, 65812: 3237, 67450: 3481, 68070: 3773, 68304: 3418, 70019: 3337, 70070: 7482, 71095: 6936, 75514: 4565, 76726: 7394, 76762: 4758, 78811: 3755, 79195: 7412, 80329: 7431, 80404: 6990, 80465: 5890, 83220: 7488, 83686: 3467, 84275: 5848, 84309: 3852, 87100: 3479, 87384: 4811, 87642: 7411, 90011: 6948, 90097: 4730, 90788: 4546, 92146: 4777, 94306: 3462, 96119: 7501, 96711: 3256, 98158: 5847, 98369: 7461, 98869: 5835, 99313: 3404, 100041: 4752, 101431: 4529, 102334: 3353, 104988: 3754, 105322: 3792, 106750: 3405, 106769: 5941, 107386: 5828}
+# validation_examples_above3k = {3875: 4752, 5642: 4753, 7036: 3519, 10517: 3500, 12048: 3821, 12790: 3813, 15011: 4771, 22114: 4588, 26966: 3855, 30641: 3802, 30762: 3832, 32635: 3836, 33504: 4734, 34978: 4569}
 
 
-new_column = ["Foo"] * len(dataset_val)
-dataset_val = dataset_val.add_column("Inverse Instruction", new_column)
-dataset_val = dataset_val.map(add_inverse_column, with_indices=True)
-print(dataset_val[0]["Inverse Instruction"])
+new_column = ["Foo"] * len(dataset_test)
+dataset_test = dataset_test.add_column("Inverse Instruction", new_column)
+dataset_test = dataset_test.map(add_inverse_column, with_indices=True)
+print(dataset_test[0]["Inverse Instruction"])
 
-new_column = ["Foo"] * len(dataset_val)
-dataset_val = dataset_val.add_column("Article", new_column)
-dataset_val = dataset_val.map(add_article_column, with_indices=True)
-print(dataset_val[13]["Article"])
-dataset_val = filter_dataset(dataset_val, validation_examples_above3k)
+new_column = ["Foo"] * len(dataset_test)
+dataset_test = dataset_test.add_column("Article", new_column)
+dataset_test = dataset_test.map(add_article_column, with_indices=True)
+print(dataset_test[13]["Article"])
 
-dataset_val.to_csv('/chronos_data/gdey/datasets/socialite_instructions/inverse_instructions_filtered/val.csv')
+dataset_test.to_csv('/chronos_data/gdey/datasets/socialite_instructions/inverse_instructions_filtered/test_with_only_train.csv')

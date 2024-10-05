@@ -70,8 +70,8 @@ if __name__ == '__main__':
                         help='Path to the base model checkpoint.')
     parser.add_argument('--dataset', type=str, required=True,
                         help='Path to the dataset.')
-    parser.add_argument('--OUTPUT_DIR', type=str, required=True,
-                        help='Path to the dataset.')
+    # parser.add_argument('--OUTPUT_DIR', type=str, required=True,
+    #                     help='Path to the dataset.')
     parser.add_argument('--LORA_R', type=int, default = 8,
                         help='Lora rank.')
     parser.add_argument('--LORA_ALPHA', type=int, default = 16,
@@ -102,6 +102,25 @@ if __name__ == '__main__':
 
     print(combined_train_dataset)
     print(combined_val_dataset)
+
+    max_len = 0
+    max_index = -1
+    example = 0
+    number_of_examples_greater_than_3000 = dict()
+    for i in range(len(combined_train_dataset)):
+        if(len(combined_train_dataset[i]['input_ids'])>max_len):
+            max_len = len(combined_train_dataset[i]['input_ids'])
+            max_index = i
+        if(len(combined_train_dataset[i]['input_ids']) > 2600):
+            number_of_examples_greater_than_3000[i] = len(combined_train_dataset[i]['input_ids'])
+    
+    print("Max token length in training", max_len)
+    print(max_index)
+    # print("Value: **********", combined_train_dataset[max_index])
+    print("Examples above 3000: ", number_of_examples_greater_than_3000)
+    print("Total examples more than 3000", len(number_of_examples_greater_than_3000))
+
+    exit()
     model = AutoModelForCausalLM.from_pretrained(args.checkpoint)
 
     GRADIENT_ACCUMULATION_STEPS = args.BATCH_SIZE // args.MICRO_BATCH_SIZE
